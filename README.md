@@ -1,26 +1,26 @@
-\# Qworpod
+Qworpod
 
 A liquid glass capsule for Windows.
 
-\## Features
+Features
 
-\- Liquid glass UI
+Liquid glass UI
 
-\- Time and CPU display
+Time and CPU display
 
-\- Click to expand, click outside to collapse
+Click to expand, click outside to collapse
 
-\- Draggable
+Draggable
 
-\- System tray
+System tray
 
-\- Autostart toggle
+Autostart toggle
 
-\## Privacy
+Privacy
 
 Fully offline. No network requests. No telemetry. No account. No cloud.
 
-\## Build
+Build
 
 npm install
 
@@ -30,7 +30,7 @@ npm run tauri dev
 
 npm run tauri build
 
-\## License
+License
 
 MIT
 
