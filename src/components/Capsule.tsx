@@ -53,11 +53,10 @@ export default function Capsule({ time, cpu, onExpand }: Props) {
       dragged.current = true;
       setPressed(false);
       start.current = null;
-      try {
-        await getCurrentWindow().startDragging();
-      } catch (err) {
-        console.error("startDragging failed:", err);
-      }
+      // 请求下一帧再触发拖拽，使得拖拽更加平滑跟手
+      requestAnimationFrame(() => {
+        getCurrentWindow().startDragging().catch(console.error);
+      });
     }
   };
 
