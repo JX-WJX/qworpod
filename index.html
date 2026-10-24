@@ -1,12 +1,191 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Qworpod</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qworpod | 液态玻璃桌面胶囊</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", -apple-system, sans-serif; }
+        body {
+            background-color: #0d0f14;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(121, 192, 255, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(180, 140, 255, 0.08), transparent 25%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 800px;
+            padding: 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .logo-inner {
+            width: 60px;
+            height: 16px;
+            border-radius: 10px;
+            background: rgba(18, 20, 26, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+        .logo-inner::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #7ee787;
+            box-shadow: 0 0 8px #7ee787;
+        }
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            background: linear-gradient(180deg, #fff, #999);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p.subtitle {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 40px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+        .buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 60px;
+        }
+        .btn {
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background: #ffffff;
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+        .feature-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #eee;
+        }
+        .feature-card p {
+            font-size: 13px;
+            color: #777;
+            line-height: 1.5;
+        }
+        footer {
+            margin-top: auto;
+            padding: 30px;
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+        }
+        footer a {
+            color: #888;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            .features { grid-template-columns: 1fr; }
+            h1 { font-size: 36px; }
+            .buttons { flex-direction: column; width: 100%; }
+            .btn { text-align: center; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-inner"></div>
+        </div>
+        
+        <h1>Qworpod</h1>
+        <p class="subtitle">
+            为 Windows 打造的极简液态玻璃胶囊。<br>
+            安静显示时间与 CPU，100% 离线，纯粹无打扰。
+        </p>
+
+        <div class="buttons">
+            <a href="https://github.com/JX-WJX/qworpod/releases" class="btn btn-primary">下载 v0.1.1-beta</a>
+            <a href="https://github.com/JX-WJX/qworpod" class="btn btn-secondary">GitHub 仓库</a>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>💧 液态玻璃</h3>
+                <p>原生的光影折射与毛玻璃质感，结合灵动的波纹交互。</p>
+            </div>
+            <div class="feature-card">
+                <h3>⚙️ 随心定制</h3>
+                <p>内置极简控制面板，自由调节透明度、尺寸与开机自启。</p>
+            </div>
+            <div class="feature-card">
+                <h3>🔒 极致安全</h3>
+                <p>0 网络请求，0 遥测，无广告无账号，完全开源且免费。</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Open Source under MIT License. Built by <a href="https://github.com/JX-WJX">JX-WJX</a>.
+    </footer>
+</body>
 </html>
