@@ -6,15 +6,12 @@
     <title>Qworpod | 原生桌面液态玻璃</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-        html {
-            scroll-behavior: smooth;
-        }
-
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'Inter', "PingFang SC", "Microsoft YaHei", sans-serif;
-            background-color: #0A0B0E;
+            background-color: #050608;
             color: #EDEDED;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
@@ -22,155 +19,259 @@
 
         .font-mono { font-family: 'JetBrains Mono', monospace; }
 
-        .glass-panel {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .glow-bg {
+        #scroll-progress {
             position: fixed;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 60%),
-                        radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
-            top: 0; left: 0; z-index: -1; pointer-events: none;
+            top: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            width: 0%;
+            z-index: 100;
+            transition: width 0.1s;
         }
 
-        .dot-grid {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
-            background-size: 32px 32px;
-            mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+        .liquid-glass {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .parallax-section {
+        .bento-card {
             position: relative;
             overflow: hidden;
         }
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 60%);
+            left: var(--mouse-x, 0); top: var(--mouse-y, 0);
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bento-card:hover::before { opacity: 1; }
+        .bento-card:hover {
+            transform: translateY(-2px) scale(1.01);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+
+        .capsule-3d { transform-style: preserve-3d; transition: transform 0.2s ease-out; }
 
         @keyframes breathe {
-            0%, 100% { transform: scale(1) translateY(0); opacity: 0.8; }
-            50% { transform: scale(1.15) translateY(-2px); opacity: 1; }
+            0%, 100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 30px rgba(59,130,246,0.6); }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 60px rgba(59,130,246,0.9); }
         }
-        .w-orb {
-            background: #FFFFFF;
-            box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(59,130,246,0.5);
-            animation: breathe 3s ease-in-out infinite;
+        .w-orb { background: #FFFFFF; animation: breathe 4s ease-in-out infinite; }
+
+        .faq-item { transition: all 0.4s ease; }
+        .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .faq-item.active .faq-content { max-height: 200px; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
+
+        .aurora-blur {
+            position: absolute;
+            filter: blur(120px);
+            border-radius: 50%;
+            opacity: 0.6;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto; }
-            .w-orb { animation: none; }
-            * { transition-duration: 0.01ms !important; }
+        #navbar { transition: all 0.4s ease; }
+        #navbar.scrolled {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            background: rgba(5, 6, 8, 0.9);
+            border-color: rgba(255,255,255,0.15);
         }
     </style>
 </head>
 <body class="antialiased selection:bg-[#3b82f6] selection:text-white">
 
-    <div class="glow-bg"></div>
+    <div id="scroll-progress"></div>
 
-    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0A0B0E]/80 backdrop-blur-xl">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-3 h-3 rounded-full bg-white shadow-[0_0_10px_#fff]"></div>
+    <div class="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 pointer-events-none">
+        <nav id="navbar" class="pointer-events-auto flex items-center justify-between w-full max-w-5xl px-6 py-3 rounded-full border border-white/10 bg-[#050608]/70 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+            <div class="flex items-center gap-3 cursor-pointer">
+                <div class="w-3 h-3 rounded-full bg-white shadow-[0_0_15px_#fff]"></div>
                 <span class="font-bold tracking-tight text-lg">Qworpod</span>
             </div>
-            <div class="flex gap-6 md:gap-8 text-sm font-medium text-white/60">
-                <a href="#features" class="hover:text-white transition-colors duration-300">特性</a>
-                <a href="#architecture" class="hover:text-white transition-colors duration-300">架构</a>
-                <a href="#assistant" class="hover:text-white transition-colors duration-300">小 W</a>
-                <a href="#faq" class="hover:text-white transition-colors duration-300">FAQ</a>
-                <a href="https://github.com/JX-WJX/qworpod" class="hover:text-white transition-colors duration-300">GitHub</a>
+            <div class="hidden md:flex gap-8 text-[13px] font-medium text-white/60">
+                <a href="#bento" class="hover:text-white transition-colors">核心特性</a>
+                <a href="#compare" class="hover:text-white transition-colors">方案对比</a>
+                <a href="#architecture" class="hover:text-white transition-colors">底层架构</a>
+                <a href="#assistant" class="hover:text-white transition-colors">小 W</a>
+                <a href="#faq" class="hover:text-white transition-colors">常见问题</a>
             </div>
-        </div>
-    </nav>
+            <a href="https://github.com/JX-WJX/qworpod" class="hidden md:inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-black font-bold hover:bg-gray-200 transition-all text-xs">
+                GitHub
+            </a>
+        </nav>
+    </div>
 
-    <section class="parallax-section min-h-screen flex flex-col items-center justify-center pt-24 px-6 relative">
-        <div class="absolute inset-0 dot-grid z-0"></div>
+    <section class="relative min-h-screen flex flex-col items-center pt-28 pb-20 overflow-hidden" id="hero-section">
+        <div class="aurora-blur bg-[#3b82f6] w-[600px] h-[600px] top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30"></div>
         
-        <div class="relative z-10 text-center flex flex-col items-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[11px] font-mono text-white/60 mb-8 backdrop-blur-md">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span>
-                v1.0.0 原生正式版已发布
+        <canvas id="particleCanvas" class="absolute inset-0 z-10 w-full h-full cursor-crosshair"></canvas>
+
+        <div class="relative z-20 text-center flex flex-col items-center w-full px-6 pointer-events-none mt-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-[11px] font-mono text-white/60 backdrop-blur-md mb-8">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6] animate-pulse"></span>
+                UI 2.0 "Prism" 正式发布
             </div>
             
-            <h1 class="font-bold tracking-tight text-6xl md:text-8xl max-w-4xl leading-tight mb-6">
-                纯粹的桌面<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40">液态玻璃。</span>
-            </h1>
-            
-            <p class="text-lg md:text-xl text-white/50 max-w-xl mb-12 leading-relaxed font-light">
-                拒绝臃肿的 Web 套壳。Qworpod 采用 C# 原生底层重构，为你带来丝滑的物理裁剪、系统级亚克力模糊，以及绝对安静的无干扰体验。
+            <div class="h-[280px] md:h-[360px]"></div>
+
+            <p class="text-base md:text-xl text-white/50 max-w-2xl mb-12 leading-relaxed font-light pointer-events-auto bg-[#050608]/40 backdrop-blur-sm p-6 rounded-2xl border border-white/5">
+                拒绝臃肿的 Web 套壳。Qworpod 采用纯 C# 原生底层重构，为你带来 60fps 的丝滑物理裁剪、系统级亚克力模糊，以及绝对安静的无干扰体验。
             </p>
 
-            <div class="glass-panel rounded-[26px] p-4 flex items-center gap-6 mb-12 relative overflow-hidden group">
-                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-                <div class="flex items-center gap-3 px-2">
-                    <span class="font-mono text-sm tracking-widest text-white/90">14:32</span>
-                    <span class="text-xs text-white/40 font-mono">10/29</span>
-                    <div class="w-px h-3 bg-white/20 mx-1"></div>
-                    <span class="flex items-center gap-1.5 text-xs text-[#3b82f6] font-mono">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span> 12%
-                    </span>
-                </div>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center relative">
-                    <div class="w-4 h-4 rounded-full w-orb"></div>
+            <div class="perspective-1000 mb-16 pointer-events-auto">
+                <div class="capsule-3d liquid-glass rounded-[26px] p-3 pr-5 flex items-center gap-6 relative group cursor-grab active:cursor-grabbing" id="hero-capsule">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                    <div class="flex items-center gap-4 px-2">
+                        <span class="font-mono text-lg tracking-wider text-white">14:32</span>
+                        <span class="text-xs text-white/50 font-mono">10/29</span>
+                        <div class="w-px h-4 bg-white/20"></div>
+                        <span class="flex items-center gap-2 text-xs text-[#3b82f6] font-mono">
+                            <span class="w-2 h-2 rounded-full bg-[#3b82f6] shadow-[0_0_10px_#3b82f6]"></span> 12%
+                        </span>
+                    </div>
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center relative">
+                        <div class="w-5 h-5 rounded-full w-orb"></div>
+                    </div>
                 </div>
             </div>
-
-            <a href="https://github.com/JX-WJX/qworpod/releases" class="backdrop-blur-md rounded-full bg-white text-black border border-white/30 px-8 py-3 font-semibold hover:bg-gray-200 transition-all duration-500 active:scale-95 text-sm">
-                下载安装包 (1.5 MB)
-            </a>
         </div>
     </section>
 
-    <section id="features" class="parallax-section min-h-screen flex items-center py-24 scroll-mt-16 relative">
-        <div class="max-w-6xl mx-auto px-6 w-full relative z-10">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">魔鬼藏在细节里。</h2>
-                <p class="text-white/50 text-lg max-w-2xl mx-auto">为了那 1 像素的极致观感，我们在底层架构上不计成本。</p>
+    <section id="bento" class="relative py-24 px-6 max-w-6xl mx-auto z-10">
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">魔鬼藏在细节里。</h2>
+            <p class="text-white/50 text-lg max-w-2xl mx-auto">为了那 1 像素的极致观感，我们在底层架构和视觉反馈上不计成本。</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="reveal liquid-glass bento-card rounded-3xl p-8 md:col-span-2 flex flex-col justify-between min-h-[320px]">
+                <div class="text-[#3b82f6] mb-6 relative z-10">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="relative z-10">
+                    <h3 class="text-2xl font-bold mb-3">原生 DWM 亚克力模糊</h3>
+                    <p class="text-white/50 leading-relaxed max-w-lg">抛弃 WebView 带来的沉重负担。直接向 Windows DWM 发起调用，结合 GDI 物理 Region 裁剪，边缘零锯齿，完美折射你的壁纸色彩。</p>
+                </div>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="glass-card p-8 md:p-10 rounded-2xl hover:bg-white/10 transition-all duration-700">
-                    <div class="text-[#3b82f6] mb-6">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">原生 DWM 模糊</h3>
-                    <p class="text-sm text-white/50 leading-relaxed">抛弃 WebView，拥抱 .NET 8。直接向 Windows 发起调用，边缘零锯齿，透出真实的壁纸折射。</p>
+            <div class="reveal reveal-delay-1 liquid-glass bento-card rounded-3xl p-8 min-h-[320px] flex flex-col justify-between">
+                <div class="text-[#8b5cf6] mb-6 relative z-10">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
                 </div>
-                
-                <div class="glass-card p-8 md:p-10 rounded-2xl hover:bg-white/10 transition-all duration-700">
-                    <div class="text-[#3b82f6] mb-6">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">极致轻量</h3>
-                    <p class="text-sm text-white/50 leading-relaxed">不打包任何多余的浏览器内核，内存占用极低，开机自启秒开，就像系统自带组件一样自然。</p>
+                <div class="relative z-10">
+                    <h3 class="text-xl font-bold mb-3">极致轻量，秒开</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">不打包任何浏览器内核，内存占用极低。开机自启毫无感知，就像系统自带组件。</p>
                 </div>
+            </div>
 
-                <div class="glass-card p-8 md:p-10 rounded-2xl hover:bg-white/10 transition-all duration-700">
-                    <div class="text-[#3b82f6] mb-6">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    </div>
+            <div class="reveal reveal-delay-1 liquid-glass bento-card rounded-3xl p-8 min-h-[320px] flex flex-col justify-between">
+                <div class="text-[#10b981] mb-6 relative z-10">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                <div class="relative z-10">
                     <h3 class="text-xl font-bold mb-3">100% 离线安全</h3>
-                    <p class="text-sm text-white/50 leading-relaxed">无网络请求，无遥测，无账号。所有数据在本地处理完毕，完全开源（MIT 协议），干干净净。</p>
+                    <p class="text-sm text-white/50 leading-relaxed">无网络请求，无遥测，无账号。所有 CPU/内存数据均由 Windows API 本地读取，断网依然完美运行。</p>
+                </div>
+            </div>
+
+            <div class="reveal reveal-delay-2 liquid-glass bento-card rounded-3xl p-8 md:col-span-2 flex flex-col md:flex-row items-center justify-between min-h-[320px] gap-8">
+                <div class="flex-1 relative z-10">
+                    <h3 class="text-2xl font-bold mb-3">60fps 逐帧物理裁剪</h3>
+                    <p class="text-white/50 leading-relaxed">展开面板、收缩、拖拽，所有的动画都经过三次贝塞尔曲线优化，拒绝生硬闪现。</p>
+                </div>
+                <div class="w-full md:w-1/2 h-36 bg-black/50 rounded-xl border border-white/10 relative overflow-hidden flex items-center justify-center">
+                    <div class="w-32 h-12 rounded-full border border-white/20 bg-white/5 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                        <div class="w-3 h-3 rounded-full bg-white shadow-[0_0_10px_#fff]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal reveal-delay-2 liquid-glass bento-card rounded-3xl p-8 min-h-[320px] flex flex-col justify-between">
+                <div class="text-[#f59e0b] mb-6 relative z-10">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                </div>
+                <div class="relative z-10">
+                    <h3 class="text-xl font-bold mb-3">高度客制化</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">内置控制面板，自由调节胶囊宽度、背景透明度与开机自启。</p>
+                </div>
+            </div>
+
+            <div class="reveal reveal-delay-2 liquid-glass bento-card rounded-3xl p-8 md:col-span-3 flex flex-col justify-between min-h-[250px]">
+                <div class="text-[#3b82f6] mb-6 relative z-10">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <div class="relative z-10">
+                    <h3 class="text-2xl font-bold mb-3">不止是监控，更是桌面陪伴</h3>
+                    <p class="text-white/50 leading-relaxed max-w-2xl">纯本地逻辑驱动的“小 W”精灵。她在你高负载时轻声提醒，在你静心工作时默默呼吸。没有令人出戏的云端 AI，只有恰到好处的陪伴。</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="architecture" class="parallax-section min-h-screen flex items-center py-24 bg-fixed bg-center bg-cover relative" style="background-image: linear-gradient(to right, #0A0B0E 0%, rgba(10,11,14,0.9) 50%, #0A0B0E 100%), radial-gradient(circle at right center, rgba(14,165,233,0.1), transparent 60%);">
-        <div class="max-w-6xl mx-auto px-6 w-full relative z-10 flex flex-col md:flex-row items-center gap-16">
-            <div class="md:w-1/2">
+    <section id="compare" class="relative py-32 px-6 overflow-hidden">
+        <div class="max-w-5xl mx-auto relative z-10">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">传统套壳 vs 纯原生。</h2>
+                <p class="text-white/50 text-lg">为什么我们坚持用最难的 C# 重写？</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="reveal liquid-glass rounded-3xl p-8 border border-red-500/20 bg-red-500/5">
+                    <h3 class="text-2xl font-bold mb-6 text-red-400 flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        传统 Web 套壳挂件
+                    </h3>
+                    <ul class="space-y-4 text-white/60">
+                        <li class="flex gap-3"><span class="text-red-400">✕</span> 动辄 100MB+ 的安装包，塞满浏览器内核</li>
+                        <li class="flex gap-3"><span class="text-red-400">✕</span> 内存占用极高，开机自启拖慢系统</li>
+                        <li class="flex gap-3"><span class="text-red-400">✕</span> 圆角边缘经常出现黑色锯齿或灰边</li>
+                        <li class="flex gap-3"><span class="text-red-400">✕</span> 亚克力模糊形同虚设，只能靠模拟</li>
+                    </ul>
+                </div>
+
+                <div class="reveal reveal-delay-1 liquid-glass rounded-3xl p-8 border border-[#3b82f6]/30 bg-[#3b82f6]/5">
+                    <h3 class="text-2xl font-bold mb-6 text-[#3b82f6] flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Qworpod 原生方案
+                    </h3>
+                    <ul class="space-y-4 text-white/80">
+                        <li class="flex gap-3"><span class="text-[#3b82f6]">✓</span> 仅 1.5MB 单文件，无需任何运行环境</li>
+                        <li class="flex gap-3"><span class="text-[#3b82f6]">✓</span> 常驻内存几兆，纯正的极客体验</li>
+                        <li class="flex gap-3"><span class="text-[#3b82f6]">✓</span> 底层 Win32 物理裁剪，边缘绝对完美</li>
+                        <li class="flex gap-3"><span class="text-[#3b82f6]">✓</span> 原生 DWM API 直接调用，真正的液态玻璃</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="architecture" class="relative py-32 px-6 overflow-hidden">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
+            <div class="md:w-1/2 reveal">
                 <div class="font-mono text-[#3b82f6] text-sm mb-4 tracking-widest">ARCHITECTURE</div>
                 <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">为什么不用 Web？</h2>
                 <p class="text-lg text-white/50 leading-relaxed mb-8">
@@ -178,18 +279,17 @@
                     Qworpod 采用纯正的原生 C# 编写，调用底层的 GDI 与 Win32 API 进行物理区域裁剪（Region），配合 DWM 原生亚克力，在保证 60fps 动画的同时，把内存压榨到了极致。
                 </p>
             </div>
-            <div class="md:w-1/2 w-full">
-                <div class="glass-panel rounded-2xl p-6 md:p-8 font-mono text-sm leading-loose text-white/60">
+            <div class="md:w-1/2 w-full reveal reveal-delay-1">
+                <div class="liquid-glass rounded-2xl p-6 md:p-8 font-mono text-sm leading-loose text-white/60 border border-white/10">
                     <div class="flex items-center gap-2 mb-4 border-b border-white/10 pb-4">
-                        <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
                         <span class="ml-2 text-xs">MainWindow.xaml.cs</span>
                     </div>
-                    <div><span class="text-[#3b82f6]">protected override</span> <span class="text-[#93c5fd]">void</span> OnSourceInitialized(EventArgs e)</div>
+                    <div><span class="text-[#c678dd]">protected override</span> <span class="text-[#61afef]">void</span> OnSourceInitialized(EventArgs e)</div>
                     <div>{</div>
                     <div class="pl-4">base.OnSourceInitialized(e);</div>
-                    <div class="pl-4 text-white/30">// 注入原生 DWM 背景与物理裁剪</div>
                     <div class="pl-4">DwmService.ApplyCornerPreference(_hwnd);</div>
                     <div class="pl-4">ApplyBackdropMode();</div>
                     <div class="pl-4">ClipNow();</div>
@@ -199,68 +299,278 @@
         </div>
     </section>
 
-    <section id="assistant" class="parallax-section min-h-screen flex items-center py-24 scroll-mt-16 bg-[#0A0B0E]">
-        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
-            <div class="md:w-1/2 flex justify-center relative order-2 md:order-1">
-                <div class="w-64 h-64 rounded-full border border-white/5 bg-[#3b82f6]/5 flex items-center justify-center relative">
-                    <div class="absolute inset-0 rounded-full bg-[#3b82f6]/10 blur-3xl"></div>
-                    <div class="w-32 h-32 rounded-full bg-[#3b82f6]/10 flex items-center justify-center">
-                        <div class="w-8 h-8 rounded-full w-orb"></div>
+    <section id="assistant" class="relative py-32 px-6 overflow-hidden">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
+            <div class="md:w-1/2 flex justify-center relative order-2 md:order-1 reveal">
+                <div id="orb-container" class="w-[300px] h-[300px] rounded-full border border-white/5 bg-[#3b82f6]/5 flex items-center justify-center relative group cursor-pointer">
+                    <div class="absolute inset-0 rounded-full bg-[#3b82f6]/10 blur-3xl group-hover:bg-[#3b82f6]/20 transition-all duration-700"></div>
+                    <div class="w-40 h-40 rounded-full bg-[#3b82f6]/10 flex items-center justify-center group-hover:scale-95 transition-transform duration-500">
+                        <div class="w-10 h-10 rounded-full w-orb group-hover:scale-110 transition-transform duration-500"></div>
                     </div>
                 </div>
             </div>
-            <div class="md:w-1/2 order-1 md:order-2">
+            <div class="md:w-1/2 order-1 md:order-2 reveal reveal-delay-1">
                 <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">不再是冷冰冰的监控。</h2>
                 <p class="text-lg text-white/50 leading-relaxed mb-8">
                     我们为你准备了“小 W”。她是一个纯本地驱动的陪伴精灵。<br><br>
-                    当你高负载渲染时，她会轻声提醒你注意散热；当你静心工作时，她就在屏幕边缘默默呼吸。没有令人出戏的云端 AI，只有恰到好处的陪伴。
+                    点击她，她会给你一句提示（或者吐槽）。没有令人出戏的云端 AI，只有恰到好处的陪伴。
                 </p>
-                <div class="backdrop-blur-md rounded-full bg-white/5 border border-white/10 px-4 py-2 inline-flex items-center gap-3">
-                    <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
-                    <span class="text-sm text-white/80 font-mono">"CPU 温度正常，放心跑吧。"</span>
+                <div class="liquid-glass rounded-full px-6 py-3 inline-flex items-center gap-3">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#10b981] shadow-[0_0_10px_#10b981]"></span>
+                    <span id="orb-text" class="text-sm text-white/80 font-mono transition-opacity duration-300">"CPU 温度正常，放心跑吧。"</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="faq" class="parallax-section min-h-screen flex items-center py-24 scroll-mt-16 relative">
-        <div class="max-w-4xl mx-auto px-6 w-full relative z-10">
-            <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-12 text-center">常见问题</h2>
+    <section id="faq" class="relative py-32 px-6 max-w-4xl mx-auto z-10">
+        <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-12 text-center reveal">常见问题</h2>
+        
+        <div class="space-y-4">
+            <div class="faq-item liquid-glass rounded-2xl overflow-hidden reveal">
+                <button class="w-full text-left p-6 md:p-8 flex justify-between items-center focus:outline-none">
+                    <h3 class="text-lg font-bold text-white">Qworpod 真的完全不需要联网吗？</h3>
+                    <svg class="faq-icon w-5 h-5 text-white/50 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </button>
+                <div class="faq-content px-6 md:px-8">
+                    <p class="text-white/50 leading-relaxed pb-6">是的。软件内部没有任何发起网络请求的代码，不使用云端服务，也没有任何遥测和账号系统。它就是一个纯粹的单机工具。</p>
+                </div>
+            </div>
             
-            <div class="space-y-4">
-                <div class="glass-card rounded-2xl p-6 md:p-8">
-                    <h3 class="text-xl font-bold mb-3 text-white">Qworpod 真的完全不需要联网吗？</h3>
-                    <p class="text-white/50 leading-relaxed">是的。软件内部没有任何发起网络请求的代码，不使用云端服务，也没有任何遥测和账号系统。它就是一个纯粹的单机工具。</p>
+            <div class="faq-item liquid-glass rounded-2xl overflow-hidden reveal reveal-delay-1">
+                <button class="w-full text-left p-6 md:p-8 flex justify-between items-center focus:outline-none">
+                    <h3 class="text-lg font-bold text-white">会收集我的硬件信息吗？</h3>
+                    <svg class="faq-icon w-5 h-5 text-white/50 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </button>
+                <div class="faq-content px-6 md:px-8">
+                    <p class="text-white/50 leading-relaxed pb-6">不会。所有的 CPU、内存数据都是通过 Windows 底层的 API 实时读取的，仅在本地内存中处理并显示在界面上，软件关闭即销毁。</p>
                 </div>
-                
-                <div class="glass-card rounded-2xl p-6 md:p-8">
-                    <h3 class="text-xl font-bold mb-3 text-white">会收集我的硬件信息吗？</h3>
-                    <p class="text-white/50 leading-relaxed">不会。所有的 CPU、内存数据都是通过 Windows 底层的 API 实时读取的，仅在本地内存中处理并显示在界面上，软件关闭即销毁。</p>
-                </div>
+            </div>
 
-                <div class="glass-card rounded-2xl p-6 md:p-8">
-                    <h3 class="text-xl font-bold mb-3 text-white">需要安装 .NET 运行环境吗？</h3>
-                    <p class="text-white/50 leading-relaxed">如果你下载的是单文件绿色版，则不需要安装任何额外环境，双击即可运行。如果你下载的是安装包，会自动处理所有依赖。</p>
+            <div class="faq-item liquid-glass rounded-2xl overflow-hidden reveal reveal-delay-2">
+                <button class="w-full text-left p-6 md:p-8 flex justify-between items-center focus:outline-none">
+                    <h3 class="text-lg font-bold text-white">需要安装 .NET 运行环境吗？</h3>
+                    <svg class="faq-icon w-5 h-5 text-white/50 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </button>
+                <div class="faq-content px-6 md:px-8">
+                    <p class="text-white/50 leading-relaxed pb-6">如果你下载的是单文件绿色版，则不需要安装任何额外环境，双击即可运行。如果你下载的是安装包，会自动处理所有依赖。</p>
+                </div>
+            </div>
+
+            <div class="faq-item liquid-glass rounded-2xl overflow-hidden reveal reveal-delay-2">
+                <button class="w-full text-left p-6 md:p-8 flex justify-between items-center focus:outline-none">
+                    <h3 class="text-lg font-bold text-white">支持哪些 Windows 版本？</h3>
+                    <svg class="faq-icon w-5 h-5 text-white/50 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </button>
+                <div class="faq-content px-6 md:px-8">
+                    <p class="text-white/50 leading-relaxed pb-6">完美兼容 Windows 10 和 Windows 11 的 64 位系统，并针对高 DPI 多显示器环境做了深度的区域重裁适配。</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-white text-[#0A0B0E] py-20 px-6">
+    <footer class="bg-white text-[#050608] py-24 px-6 relative z-10">
         <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
-            <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">给 Windows 桌面加点魔法。</h2>
-            <p class="text-[#0A0B0E]/60 text-lg mb-10">Windows 10 / 11 适用 · 单文件绿色版 · 完全免费</p>
+            <h2 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">给桌面加点魔法。</h2>
+            <p class="text-[#050608]/60 text-lg mb-12">Windows 10 / 11 适用 · 单文件绿色版 · 完全免费</p>
             
-            <a href="https://github.com/JX-WJX/qworpod/releases" class="rounded-full bg-[#0A0B0E] text-white px-10 py-4 font-semibold hover:bg-[#1e3a5f] transition-all duration-500 active:scale-95 flex items-center gap-2">
+            <a href="https://github.com/JX-WJX/qworpod" class="rounded-full bg-[#050608] text-white px-10 py-4 font-bold hover:scale-105 transition-transform duration-300 flex items-center gap-3 shadow-xl">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
-                前往 GitHub 获取
+                前往 GitHub 仓库
             </a>
             
-            <div class="mt-16 text-xs text-[#0A0B0E]/40 font-mono">
+            <div class="mt-16 text-xs text-[#050608]/40 font-mono">
                 Open Source under MIT License. Built by JX-WJX.
             </div>
         </div>
     </footer>
 
+    <script>
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            document.getElementById('scroll-progress').style.width = progress + '%';
+
+            const navbar = document.getElementById('navbar');
+            if (scrollTop > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        const mouse = { x: -1000, y: -1000, radius: 120 };
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initParticles();
+        }
+
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        });
+        window.addEventListener('mouseleave', () => {
+            mouse.x = -1000;
+            mouse.y = -1000;
+        });
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x + (Math.random() - 0.5) * 10;
+                this.y = y + (Math.random() - 0.5) * 10;
+                this.originX = x;
+                this.originY = y;
+                this.size = Math.random() * 1.2 + 0.6;
+                this.density = (Math.random() * 20) + 1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+                let maxDistance = mouse.radius;
+                let force = (maxDistance - distance) / maxDistance;
+                let directionX = forceDirectionX * force * this.density;
+                let directionY = forceDirectionY * force * this.density;
+
+                if (distance < mouse.radius) {
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if (this.x !== this.originX) {
+                        let dx = this.x - this.originX;
+                        this.x -= dx / 8;
+                    }
+                    if (this.y !== this.originY) {
+                        let dy = this.y - this.originY;
+                        this.y -= dy / 8;
+                    }
+                }
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            ctx.clearRect(0, 0, width, height);
+            
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const fontSize = Math.min(width * 0.075, 90);
+            ctx.font = `800 ${fontSize}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+            
+            const textY = height * 0.25;
+            ctx.fillText("纯粹的桌面", width / 2, textY);
+            ctx.fillText("液态玻璃。", width / 2, textY + fontSize * 1.3);
+
+            const textCoordinates = ctx.getImageData(0, 0, width, height);
+            ctx.clearRect(0, 0, width, height);
+
+            const gap = 4;
+            for (let y = 0; y < height; y += gap) {
+                for (let x = 0; x < width; x += gap) {
+                    const index = (y * width + x) * 4;
+                    const alpha = textCoordinates.data[index + 3];
+                    if (alpha > 128) {
+                        particles.push(new Particle(x, y));
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+        }
+        
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            particles.forEach(p => {
+                let dx = p.x - clickX;
+                let dy = p.y - clickY;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < 250) {
+                    p.x += dx * 2.5;
+                    p.y += dy * 2.5;
+                }
+            });
+        });
+
+        resize();
+        animate();
+
+        const capsule = document.getElementById('hero-capsule');
+        const heroSection = document.getElementById('hero-section');
+        heroSection.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 35;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 35;
+            capsule.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+        heroSection.addEventListener('mouseleave', () => {
+            capsule.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            capsule.style.transition = 'transform 0.5s ease';
+            setTimeout(() => { capsule.style.transition = 'transform 0.1s ease-out'; }, 500);
+        });
+
+        const orbTexts = ["CPU 温度正常，放心跑吧。", "风扇有点吵，要不要歇会儿？", "检测到内存占用较高，建议清理。", "今天也是元气满满的一天！"];
+        let orbIndex = 0;
+        const orbTextEl = document.getElementById('orb-text');
+        document.getElementById('orb-container').addEventListener('click', () => {
+            orbTextEl.style.opacity = 0;
+            setTimeout(() => {
+                orbIndex = (orbIndex + 1) % orbTexts.length;
+                orbTextEl.textContent = `"${orbTexts[orbIndex]}"`;
+                orbTextEl.style.opacity = 1;
+            }, 300);
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.querySelector('button').addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                if (!isActive) item.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
