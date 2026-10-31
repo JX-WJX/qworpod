@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qworpod | 原生桌面液态玻璃</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #0A0B0E;
+            color: #EDEDED;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .glass-panel {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glow-bg {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
+            top: 0; left: 0; z-index: -1; pointer-events: none;
+        }
+
+        .dot-grid {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+            background-size: 32px 32px;
+            mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+        }
+
+        .parallax-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1) translateY(0); opacity: 0.8; }
+            50% { transform: scale(1.15) translateY(-2px); opacity: 1; }
+        }
+        .w-orb {
+            background: #FFFFFF;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(59,130,246,0.5);
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .w-orb { animation: none; }
+            * { transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#3b82f6] selection:text-white">
+
+    <div class="glow-bg"></div>
+
+    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0A0B0E]/80 backdrop-blur-xl">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-white shadow-[0_0_10px_#fff]"></div>
+                <span class="font-bold tracking-tight text-lg">Qworpod</span>
+            </div>
+            <div class="flex gap-6 md:gap-8 text-sm font-medium text-white/60">
+                <a href="#features" class="hover:text-white transition-colors duration-300">特性</a>
+                <a href="#architecture" class="hover:text-white transition-colors duration-300">架构</a>
+                <a href="#assistant" class="hover:text-white transition-colors duration-300">小 W</a>
+                <a href="#faq" class="hover:text-white transition-colors duration-300">FAQ</a>
+                <a href="https://github.com/JX-WJX/qworpod" class="hover:text-white transition-colors duration-300">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="parallax-section min-h-screen flex flex-col items-center justify-center pt-24 px-6 relative">
+        <div class="absolute inset-0 dot-grid z-0"></div>
+        
+        <div class="relative z-10 text-center flex flex-col items-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[11px] font-mono text-white/60 mb-8 backdrop-blur-md">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span>
+                v1.0.0 原生正式版已发布
+            </div>
+            
+            <h1 class="font-bold tracking-tight text-6xl md:text-8xl max-w-4xl leading-tight mb-6">
+                纯粹的桌面<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40">液态玻璃。</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-white/50 max-w-xl mb-12 leading-relaxed font-light">
+                拒绝臃肿的 Web 套壳。Qworpod 采用 C# 原生底层重构，为你带来丝滑的物理裁剪、系统级亚克力模糊，以及绝对安静的无干扰体验。
+            </p>
+
+            <div class="glass-panel rounded-[26px] p-4 flex items-center gap-6 mb-12 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                <div class="flex items-center gap-3 px-2">
+                    <span class="font-mono text-sm tracking-widest text-white/90">14:32</span>
+                    <span class="text-xs text-white/40 font-mono">10/29</span>
+                    <div class="w-px h-3 bg-white/20 mx-1"></div>
+                    <span class="flex items-center gap-1.5 text-xs text-[#3b82f6] font-mono">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span> 12%
+                    </span>
+                </div>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center relative">
+                    <div class="w-4 h-4 rounded-full w-orb"></div>
+                </div>
+            </div>
+
+            <a href="https://github.com/JX-WJX/qworpod/releases" class="backdrop-blur-md rounded-full bg-white text-black border border-white/30 px-8 py-3 font-semibold hover:bg-gray-200 transition-all duration-500 active:scale-95 text-sm">
+                下载安装包 (1.5 MB)
+            </a>
+        </div>
+    </section>
+
+    <section id="features" class="parallax-section min-h-screen flex items-center py-24 scroll-mt-16 relative">
+        <div class="max-w-6xl mx-auto px-6 w-full relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">魔鬼藏在细节里。</h2>
+                <p class="text-white/50 text-lg max-w-2xl mx-auto">为了那 1 像素的极致观感，我们在底层架构上不计成本。</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card p-8 md:p-10 rounded-2xl hover:bg-white/10 transition-all duration-700">
+                    <div class="text-[#3b82f6] mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">原生 DWM 模糊</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">抛弃 WebView，拥抱 .NET 8。直接向 Windows 发起调用，边缘零锯齿，透出真实的壁纸折射。</p>
+                </div>
+                
+                <div class="glass-card p-8 md:p-10 rounded-2xl hover:bg-white/10 transition-all duration-700">
+                    <div class="text-[#3b82f6] mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">极致轻量</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">不打包任何多余的浏览器内核，内存占用极低，开机自启秒开，就像系统自带组件一样自然。</p>
+                </div>
+
+                <div class="glass-card p-8 md:p-10 rounded-2xl hover:bg-white/10 transition-all duration-700">
+                    <div class="text-[#3b82f6] mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">100% 离线安全</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">无网络请求，无遥测，无账号。所有数据在本地处理完毕，完全开源（MIT 协议），干干净净。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="architecture" class="parallax-section min-h-screen flex items-center py-24 bg-fixed bg-center bg-cover relative" style="background-image: linear-gradient(to right, #0A0B0E 0%, rgba(10,11,14,0.9) 50%, #0A0B0E 100%), radial-gradient(circle at right center, rgba(14,165,233,0.1), transparent 60%);">
+        <div class="max-w-6xl mx-auto px-6 w-full relative z-10 flex flex-col md:flex-row items-center gap-16">
+            <div class="md:w-1/2">
+                <div class="font-mono text-[#3b82f6] text-sm mb-4 tracking-widest">ARCHITECTURE</div>
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">为什么不用 Web？</h2>
+                <p class="text-lg text-white/50 leading-relaxed mb-8">
+                    传统桌面挂件大多依赖网页套壳技术，导致内存占用高、渲染锯齿、甚至需要安装巨大的运行环境。<br><br>
+                    Qworpod 采用纯正的原生 C# 编写，调用底层的 GDI 与 Win32 API 进行物理区域裁剪（Region），配合 DWM 原生亚克力，在保证 60fps 动画的同时，把内存压榨到了极致。
+                </p>
+            </div>
+            <div class="md:w-1/2 w-full">
+                <div class="glass-panel rounded-2xl p-6 md:p-8 font-mono text-sm leading-loose text-white/60">
+                    <div class="flex items-center gap-2 mb-4 border-b border-white/10 pb-4">
+                        <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                        <span class="ml-2 text-xs">MainWindow.xaml.cs</span>
+                    </div>
+                    <div><span class="text-[#3b82f6]">protected override</span> <span class="text-[#93c5fd]">void</span> OnSourceInitialized(EventArgs e)</div>
+                    <div>{</div>
+                    <div class="pl-4">base.OnSourceInitialized(e);</div>
+                    <div class="pl-4 text-white/30">// 注入原生 DWM 背景与物理裁剪</div>
+                    <div class="pl-4">DwmService.ApplyCornerPreference(_hwnd);</div>
+                    <div class="pl-4">ApplyBackdropMode();</div>
+                    <div class="pl-4">ClipNow();</div>
+                    <div>}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="assistant" class="parallax-section min-h-screen flex items-center py-24 scroll-mt-16 bg-[#0A0B0E]">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
+            <div class="md:w-1/2 flex justify-center relative order-2 md:order-1">
+                <div class="w-64 h-64 rounded-full border border-white/5 bg-[#3b82f6]/5 flex items-center justify-center relative">
+                    <div class="absolute inset-0 rounded-full bg-[#3b82f6]/10 blur-3xl"></div>
+                    <div class="w-32 h-32 rounded-full bg-[#3b82f6]/10 flex items-center justify-center">
+                        <div class="w-8 h-8 rounded-full w-orb"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="md:w-1/2 order-1 md:order-2">
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">不再是冷冰冰的监控。</h2>
+                <p class="text-lg text-white/50 leading-relaxed mb-8">
+                    我们为你准备了“小 W”。她是一个纯本地驱动的陪伴精灵。<br><br>
+                    当你高负载渲染时，她会轻声提醒你注意散热；当你静心工作时，她就在屏幕边缘默默呼吸。没有令人出戏的云端 AI，只有恰到好处的陪伴。
+                </p>
+                <div class="backdrop-blur-md rounded-full bg-white/5 border border-white/10 px-4 py-2 inline-flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                    <span class="text-sm text-white/80 font-mono">"CPU 温度正常，放心跑吧。"</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="parallax-section min-h-screen flex items-center py-24 scroll-mt-16 relative">
+        <div class="max-w-4xl mx-auto px-6 w-full relative z-10">
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-12 text-center">常见问题</h2>
+            
+            <div class="space-y-4">
+                <div class="glass-card rounded-2xl p-6 md:p-8">
+                    <h3 class="text-xl font-bold mb-3 text-white">Qworpod 真的完全不需要联网吗？</h3>
+                    <p class="text-white/50 leading-relaxed">是的。软件内部没有任何发起网络请求的代码，不使用云端服务，也没有任何遥测和账号系统。它就是一个纯粹的单机工具。</p>
+                </div>
+                
+                <div class="glass-card rounded-2xl p-6 md:p-8">
+                    <h3 class="text-xl font-bold mb-3 text-white">会收集我的硬件信息吗？</h3>
+                    <p class="text-white/50 leading-relaxed">不会。所有的 CPU、内存数据都是通过 Windows 底层的 API 实时读取的，仅在本地内存中处理并显示在界面上，软件关闭即销毁。</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 md:p-8">
+                    <h3 class="text-xl font-bold mb-3 text-white">需要安装 .NET 运行环境吗？</h3>
+                    <p class="text-white/50 leading-relaxed">如果你下载的是单文件绿色版，则不需要安装任何额外环境，双击即可运行。如果你下载的是安装包，会自动处理所有依赖。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white text-[#0A0B0E] py-20 px-6">
+        <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">给 Windows 桌面加点魔法。</h2>
+            <p class="text-[#0A0B0E]/60 text-lg mb-10">Windows 10 / 11 适用 · 单文件绿色版 · 完全免费</p>
+            
+            <a href="https://github.com/JX-WJX/qworpod/releases" class="rounded-full bg-[#0A0B0E] text-white px-10 py-4 font-semibold hover:bg-[#1e3a5f] transition-all duration-500 active:scale-95 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
+                前往 GitHub 获取
+            </a>
+            
+            <div class="mt-16 text-xs text-[#0A0B0E]/40 font-mono">
+                Open Source under MIT License. Built by JX-WJX.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
