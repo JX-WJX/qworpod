@@ -1,37 +1,10 @@
-Qworpod
+Qworpod 暂停更新公告
 
-A liquid glass capsule for Windows.
+感谢大家一路以来的陪伴。
+经过慎重考虑，我们决定暂时停止 Qworpod 的后续更新与维护。
 
-Features
+这并非一个轻易的决定。从第一行原生 C# 代码，到那个在桌面上呼吸的胶囊，再到小 W 的每一次问候，离不开每一位给予建议的你们。
 
-Liquid glass UI
+项目的源码将继续在 GitHub 保持开源。如果你愿意，它依然可以作为你桌面上的一个小挂件继续运行。
 
-Time and CPU display
-
-Click to expand, click outside to collapse
-
-Draggable
-
-System tray
-
-Autostart toggle
-
-Privacy
-
-Fully offline. No network requests. No telemetry. No account. No cloud.
-
-Build
-
-npm install
-
-npm run tauri icon your-icon.png
-
-npm run tauri dev
-
-npm run tauri build
-
-License
-
-MIT
-
-*注意：本产品免费开源,请谨慎下载打包版或破解版(这些应用非我们所作)*
+江湖路远，感谢相遇。
