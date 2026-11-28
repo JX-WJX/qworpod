@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qworpod | 系统维护中</title>
+    <title>Qworpod | 项目暂停更新通知</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -16,8 +16,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            margin: 0;
         }
 
         .font-mono { font-family: 'JetBrains Mono', monospace; }
@@ -26,185 +27,149 @@
             position: absolute;
             filter: blur(120px);
             border-radius: 50%;
-            opacity: 0.4;
+            opacity: 0.5;
             z-index: 0;
             pointer-events: none;
+            animation: float 20s infinite alternate ease-in-out;
         }
 
-        .liquid-glass {
-            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
-            backdrop-filter: blur(24px) saturate(150%);
-            -webkit-backdrop-filter: blur(24px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-30px, 30px) scale(1.1); }
+        }
+
+        .glass-target {
+            position: relative;
+            overflow: hidden;
             border-radius: 24px;
-            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            background: transparent;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .input-glass {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border-radius: 12px;
-            padding: 12px 16px;
-            width: 100%;
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .input-glass:focus {
-            border-color: rgba(59, 130, 246, 0.5);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
-        }
-
-        .btn-glass {
-            background: #3b82f6;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-glass:hover {
-            background: #2563eb;
+        .glass-target:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        .dot {
-            width: 8px;
-            height: 8px;
-            background-color: #3b82f6;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #3b82f6;
-            animation: blink 1.5s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        .glass-target > * {
+            position: relative;
+            z-index: 1;
         }
 
         .reveal {
-            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
+            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .delay-1 { animation-delay: 0.1s; }
         .delay-2 { animation-delay: 0.2s; }
 
-        @keyframes fadeIn {
+        @keyframes fadeInUp {
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px #ef4444; }
+            50% { opacity: 0.5; box-shadow: 0 0 2px #ef4444; }
         }
     </style>
 </head>
 <body class="relative p-6">
 
-    <div class="aurora-blur bg-[#3b82f6] w-[500px] h-[500px] top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-    <div class="aurora-blur bg-[#8b5cf6] w-[300px] h-[300px] bottom-0 right-0"></div>
+    <div class="aurora-blur bg-[#3b82f6] w-[600px] h-[600px] top-[-10%] left-[-10%]"></div>
+    <div class="aurora-blur bg-[#ef4444] w-[400px] h-[400px] bottom-[-10%] right-[-10%] opacity-20" style="animation-delay: -5s;"></div>
 
-    <div class="relative z-10 w-full max-w-3xl flex flex-col gap-6 my-10">
-        
-        <!-- 顶部状态卡片 -->
-        <div class="liquid-glass p-10 md:p-12 text-center reveal relative overflow-hidden">
-            <div class="absolute top-4 right-4 flex items-center gap-2 px-3 py-1 bg-black/30 rounded-full border border-white/10">
-                <div class="dot"></div>
-                <span class="text-[10px] text-white/60 font-mono tracking-widest">MAINTENANCE</span>
+    <div id="root" class="relative z-10 w-full max-w-4xl flex flex-col gap-6">
+
+        <div class="text-center reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-[11px] font-mono text-white/60 backdrop-blur-md mb-6">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500 pulse-dot"></span>
+                PROJECT SUSPENDED
             </div>
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-2">Qworpod</h1>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
             
-            <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 mt-4">系统升级中</h1>
-            <p class="text-white/50 text-base md:text-lg leading-relaxed max-w-lg mx-auto">
-                我们正在进行 Qworpod 底层架构与 UI 2.0 的最终打磨。<br>
-                网站暂时处于维护状态，感谢你的耐心等待。
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- 左侧：开发进度日志 -->
-            <div class="liquid-glass p-8 reveal delay-1 flex flex-col">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#10b981]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    当前工作进度
-                </h2>
-                <ul class="space-y-4 text-sm text-white/70 flex-1">
-                    <li class="flex items-start gap-3">
-                        <span class="text-[#3b82f6] mt-0.5">●</span>
-                        <div>
-                            <span class="font-bold text-white">系统媒体控制 (SMTC)</span><br>
-                            <span class="text-xs text-white/40">接入系统级音乐信息与封面</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="text-[#3b82f6] mt-0.5">●</span>
-                        <div>
-                            <span class="font-bold text-white">全局鼠标钩子</span><br>
-                            <span class="text-xs text-white/40">实现点击空白处自动收起胶囊</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <span class="text-[#3b82f6] mt-0.5">●</span>
-                        <div>
-                            <span class="font-bold text-white">Win32 区域裁剪优化</span><br>
-                            <span class="text-xs text-white/40">修复多显示器与高 DPI 适配</span>
-                        </div>
-                    </li>
-                </ul>
-                <a href="https://github.com/JX-WJX/qworpod" target="_blank" class="mt-6 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
-                    前往 GitHub 关注进度
-                </a>
+            <div class="md:col-span-3 glass-target p-8 md:p-10 reveal delay-1 flex flex-col justify-center">
+                <h2 class="text-2xl font-bold mb-6 text-white">感谢大家一路以来的陪伴。</h2>
+                <div class="space-y-4 text-white/70 text-sm md:text-base leading-relaxed">
+                    <p>经过慎重考虑，我们决定暂时停止 Qworpod 的后续更新与维护。这并非一个轻易的决定。</p>
+                    <p>从第一行原生 C# 代码，到那个在桌面上呼吸的胶囊，再到小 W 的每一次问候，离不开每一位给予建议和 Star 的你们。</p>
+                    <p>项目的源码将继续在 GitHub 保持开源。如果你愿意，它依然可以作为你桌面上的一个小挂件继续运行。</p>
+                    <p class="font-medium text-white/90 pt-2">江湖路远，感谢相遇。</p>
+                </div>
             </div>
 
-            <!-- 右侧：反馈表单 -->
-            <div class="liquid-glass p-8 reveal delay-2 flex flex-col">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    反馈与建议
-                </h2>
-                <form id="feedbackForm" class="flex flex-col gap-4 flex-1">
-                    <input type="text" id="fbName" class="input-glass text-sm" placeholder="你的昵称 (选填)">
-                    <textarea id="fbMsg" class="input-glass text-sm resize-none flex-1 min-h-[100px]" placeholder="遇到什么 Bug，或者有什么想法？（必填）" required></textarea>
-                    <button type="submit" class="btn-glass w-full text-sm">发送反馈</button>
-                </form>
-                <p class="text-[11px] text-white/30 text-center mt-3">点击发送将调用本地邮件客户端</p>
+            <div class="md:col-span-2 flex flex-col gap-6">
+                
+                <div class="glass-target p-8 reveal delay-2 flex flex-col items-center text-center justify-center flex-1">
+                    <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                        <div class="w-4 h-4 rounded-full bg-white shadow-[0_0_10px_#fff]"></div>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">保持关注</h3>
+                    <p class="text-xs text-white/50 mb-6">后续若有新的灵感或安排，会在官方仓库第一时间同步。</p>
+                    <a href="https://github.com/JX-WJX/qworpod" target="_blank" class="w-full py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
+                        前往 GitHub
+                    </a>
+                </div>
+
+                <div class="glass-target p-8 reveal delay-2 flex flex-col items-center text-center justify-center flex-1">
+                    <h3 class="text-lg font-bold mb-2">联系作者</h3>
+                    <p class="text-xs text-white/50 mb-6">有任何问题或想交流的，随时联系。</p>
+                    <a href="mailto:3378627873@qq.com" class="w-full py-3 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white transition-colors text-sm font-medium flex items-center justify-center">
+                        发送邮件
+                    </a>
+                </div>
+
             </div>
         </div>
 
-        <div class="text-center text-xs text-white/30 font-mono mt-4 reveal delay-2">
+        <div class="text-center text-xs text-white/30 font-mono reveal delay-2 mt-4">
             Open Source under MIT License. Built by JX-WJX.
         </div>
     </div>
 
-    <script>
-       
-        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('fbName').value.trim() || '匿名用户';
-            const msg = document.getElementById('fbMsg').value.trim();
-            
-            if (!msg) return;
+    <script type="module">
+        import { LiquidGlass } from 'https://cdn.jsdelivr.net/npm/@ybouane/liquidglass/dist/index.js';
 
-            const email = '3378627873@qq.com';
-            const subject = encodeURIComponent(`[Qworpod 反馈] 来自 ${name} 的消息`);
-            const body = encodeURIComponent(`反馈内容：\n${msg}\n\n---\n发送自 Qworpod 维护页面`);
+        (async () => {
+            const glassEls = document.querySelectorAll('.glass-target');
             
-           
-            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-            
-            
-            const btn = this.querySelector('button');
-            const originalText = btn.innerText;
-            btn.innerText = '已拉起邮件客户端';
-            btn.style.background = '#10b981';
-            
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.style.background = '';
-                document.getElementById('fbMsg').value = '';
-            }, 3000);
-        });
+            glassEls.forEach(el => {
+                el.dataset.config = JSON.stringify({
+                    blurAmount: 0.25,
+                    refraction: 0.65,
+                    chromAberration: 0.08,
+                    fresnel: 1.1
+                });
+            });
+
+            try {
+                await LiquidGlass.init({
+                    root: document.getElementById('root'),
+                    glassElements: glassEls,
+                    defaults: {
+                        cornerRadius: 24,
+                        floating: false
+                    }
+                });
+            } catch (err) {
+                console.warn('WebGL fallback triggered', err);
+                glassEls.forEach(el => {
+                    el.style.background = 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%)';
+                    el.style.backdropFilter = 'blur(24px) saturate(150%)';
+                    el.style.webkitBackdropFilter = 'blur(24px) saturate(150%)';
+                    el.style.boxShadow = '0 20px 40px -10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15)';
+                });
+            }
+        })();
     </script>
 </body>
 </html>
